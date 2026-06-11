@@ -38,7 +38,7 @@ Full execution plan with per-task goals and acceptance criteria:
 - [x] Displacement map generator (SDF + erf falloff + dome + splay + specular)
 - [x] SVG filter manager with lens subregions and Safari id rotation
 - [x] Interactive demo with Switch/Slider widgets, smooth on Safari
-- [ ] Engine hardening: pure-function map core, tests, quadrant symmetry, map cache (T1–T3)
+- [x] Engine hardening: pure-function map core, tests, quadrant symmetry, map cache (T1–T3)
 - [ ] Packaging, CI, public demo deploy (T4–T6)
 - [ ] React `<Glass>` binding (T7)
 - [ ] shadcn-style component registry: Switch, Slider, Tabs… (T8–T9)

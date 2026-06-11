@@ -4,13 +4,28 @@
   "description": "True optical refraction glass for the web. SVG feDisplacementMap based, works in every modern browser.",
   "license": "MIT",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
+    "tsup": "^8.0.0",
     "typescript": "^5.7.0"
   },
   "keywords": [
@@ -18,7 +33,7 @@
     "glassmorphism",
     "liquid-glass",
     "refraction",
-    "feDisplacementMap",
+    "feDisplacement-map",
     "svg-filter",
     "ui"
   ]

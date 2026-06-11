@@ -5,7 +5,7 @@
     "dev": "pnpm --filter @lenscn/demo dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
-    "test": "vitest run"
+    "test": "pnpm -r test"
   },
   "devDependencies": {
     "vitest": "^3.0.0"
