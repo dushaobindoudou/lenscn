@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "lenscn",
+  "homepage": "https://dushaobindoudou.github.io/lenscn/",
+  "items": [
+    {
+      "name": "glass-switch",
+      "type": "registry:component",
+      "title": "Glass Switch",
+      "description": "An accessible switch with a refracting glass handle that slides between off and on.",
+      "files": [
+        {
+          "path": "registry/components/glass-switch/glass-switch.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": ["@lenscn/react", "lenscn"],
+      "registryDependencies": []
+    },
+    {
+      "name": "glass-slider",
+      "type": "registry:component",
+      "title": "Glass Slider",
+      "description": "A range slider with a refracting glass handle. Drag, or use arrow keys.",
+      "files": [
+        {
+          "path": "registry/components/glass-slider/glass-slider.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": ["@lenscn/react", "lenscn"],
+      "registryDependencies": []
+    }
+  ]
+}

@@ -7,7 +7,15 @@
     "jsx": "react-jsx",
     "strict": true,
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "react": ["../../packages/react/node_modules/@types/react/index.d.ts"],
+      "react/jsx-runtime": ["../../packages/react/node_modules/@types/react/index.d.ts"],
+      "react-dom": ["../../packages/react/node_modules/@types/react-dom/index.d.ts"],
+      "@lenscn/react": ["../../packages/react/src/index.ts"],
+      "lenscn": ["../../packages/lenscn/src/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../../registry/components"]
 }
