@@ -32,14 +32,18 @@ Move your pointer across the panel — the lens refracts live DOM: text, gradien
 
 ## Roadmap
 
+Full execution plan with per-task goals and acceptance criteria:
+**[docs/PLAN.md](docs/PLAN.md)**.
+
 - [x] Displacement map generator (SDF + erf falloff + dome + splay + specular)
 - [x] SVG filter manager with lens subregions and Safari id rotation
-- [x] Interactive demo
-- [ ] Quadrant-symmetry optimization (4× faster map generation)
-- [ ] React `<Glass>` binding
-- [ ] shadcn-style component registry (Switch, Slider, Tabs, Dialog…)
-- [ ] WebGL renderer for `<canvas>` and `<video>` content
-- [ ] `prefers-reduced-motion` / `prefers-reduced-transparency` degradation
+- [x] Interactive demo with Switch/Slider widgets, smooth on Safari
+- [ ] Engine hardening: pure-function map core, tests, quadrant symmetry, map cache (T1–T3)
+- [ ] Packaging, CI, public demo deploy (T4–T6)
+- [ ] React `<Glass>` binding (T7)
+- [ ] shadcn-style component registry: Switch, Slider, Tabs… (T8–T9)
+- [ ] Reduced-motion / reduced-transparency degradation (T10)
+- [ ] Multi-lens filters, WebGL for `<canvas>`/`<video>`, Firefox pass (T11–T13)
 
 ## Credits
 
