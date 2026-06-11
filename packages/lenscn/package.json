@@ -28,13 +28,24 @@
     "tsup": "^8.0.0",
     "typescript": "^5.7.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dushaobindoudou/lenscn.git",
+    "directory": "packages/lenscn"
+  },
+  "homepage": "https://dushaobindoudou.github.io/lenscn/",
+  "bugs": "https://github.com/dushaobindoudou/lenscn/issues",
   "keywords": [
     "glass",
     "glassmorphism",
     "liquid-glass",
+    "frosted-glass",
     "refraction",
-    "feDisplacement-map",
+    "lens",
+    "displacement-map",
+    "fedisplacementmap",
     "svg-filter",
-    "ui"
+    "ui",
+    "design-system"
   ]
 }

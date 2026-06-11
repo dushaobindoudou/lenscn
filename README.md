@@ -1,12 +1,34 @@
 # lenscn
 
 [![CI](https://github.com/dushaobindoudou/lenscn/actions/workflows/ci.yml/badge.svg)](https://github.com/dushaobindoudou/lenscn/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**True optical refraction glass for the web.** One SVG filter primitive, every modern browser, no flags, no fallbacks.
+**True optical refraction glass for the web.** Liquid-glass / glassmorphism UI with *real* lens refraction — one SVG filter primitive, every modern browser, no flags, no Chromium-only hacks.
+
+**[▶ Live demo](https://dushaobindoudou.github.io/lenscn/)**
 
 Most "liquid glass" libraries fake refraction with `backdrop-filter: url(#svg-filter)` — which only Chromium supports, so the effect silently disappears in Safari and Firefox. lenscn takes the approach described in Aave's [Building Glass for the Web](https://aave.com/design/building-glass-for-the-web): apply the displacement filter to the element's **own painted content** (`filter: url()` works with SVG filters everywhere), and move only the filter's lens subregion for motion.
 
-> Status: **early**. The core engine (displacement map generator + filter manager) and an interactive demo work today. shadcn-style components are the roadmap.
+## Quick start
+
+```bash
+npm install lenscn            # framework-free core engine
+npm install @lenscn/react     # React <Glass> binding
+```
+
+```tsx
+import { Glass } from '@lenscn/react'
+
+<Glass
+  lens={{ width: 68, height: 68, borderRadius: 34, depth: 18 }}
+  look={{ scale: 26, chroma: 0.2 }}
+  x={x} y={y}
+>
+  <SwitchTrack />
+</Glass>
+```
+
+Ready-made accessible components (Switch, Slider, Tabs, SegmentedControl) live in [`registry/`](registry/) and are distributed **as source**, shadcn style — copy them into your project and own the code. The [`registry.json`](registry/registry.json) follows the shadcn registry schema.
 
 ## How it works
 
@@ -29,8 +51,25 @@ Move your pointer across the panel — the lens refracts live DOM: text, gradien
 
 | Package | What it is |
 |---|---|
-| `lenscn` | Core engine: `generateLensMap()` + `GlassFilter` (framework-free) |
-| `@lenscn/demo` | Interactive playground (Vite) |
+| [`lenscn`](packages/lenscn) | Core engine: `generateLensMap()` + `GlassFilter` (framework-free, zero dependencies) |
+| [`@lenscn/react`](packages/react) | React binding: `<Glass>` component + `useGlass` hook |
+| [`registry/`](registry/) | shadcn-style component sources: GlassSwitch, GlassSlider, GlassTabs, GlassSegmentedControl |
+| `@lenscn/demo`, `@lenscn/demo-react` | Interactive playgrounds (Vite) |
+
+## Accessibility & degradation
+
+- Every registry component follows the WAI-ARIA pattern for its role (switch, slider, tabs) with full keyboard support and visible focus.
+- `prefers-reduced-motion: reduce` — lens movement jumps instead of easing.
+- `prefers-reduced-transparency: reduce`, or no SVG filter support — the glass effect turns off and components render a plain track with a solid handle. Everything stays fully usable.
+- `isSupported()` and `prefersReducedMotion()` are exported from `lenscn` for your own components.
+
+## Browser support
+
+| Browser | Status |
+|---|---|
+| Chromium (Chrome, Edge, Arc…) | ✅ Supported, primary CI target |
+| Safari (macOS / iOS) | ✅ Supported — filter-id rotation and subregion quirks handled |
+| Firefox | ✅ Works; dedicated verification pass tracked as [T13](docs/PLAN.md) |
 
 ## Roadmap
 
