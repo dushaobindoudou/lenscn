@@ -1,5 +1,7 @@
 # lenscn
 
+[![CI](https://github.com/dushaobindoudou/lenscn/actions/workflows/ci.yml/badge.svg)](https://github.com/dushaobindoudou/lenscn/actions/workflows/ci.yml)
+
 **True optical refraction glass for the web.** One SVG filter primitive, every modern browser, no flags, no fallbacks.
 
 Most "liquid glass" libraries fake refraction with `backdrop-filter: url(#svg-filter)` — which only Chromium supports, so the effect silently disappears in Safari and Firefox. lenscn takes the approach described in Aave's [Building Glass for the Web](https://aave.com/design/building-glass-for-the-web): apply the displacement filter to the element's **own painted content** (`filter: url()` works with SVG filters everywhere), and move only the filter's lens subregion for motion.
