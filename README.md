@@ -41,11 +41,17 @@ Full execution plan with per-task goals and acceptance criteria:
 - [x] SVG filter manager with lens subregions and Safari id rotation
 - [x] Interactive demo with Switch/Slider widgets, smooth on Safari
 - [x] Engine hardening: pure-function map core, tests, quadrant symmetry, map cache (T1–T3)
-- [ ] Packaging, CI, public demo deploy (T4–T6)
-- [ ] React `<Glass>` binding (T7)
-- [ ] shadcn-style component registry: Switch, Slider, Tabs… (T8–T9)
-- [ ] Reduced-motion / reduced-transparency degradation (T10)
+- [x] Packaging, CI, public demo deploy (T4–T6)
+- [x] React `<Glass>` binding (T7)
+- [x] shadcn-style component registry: Switch, Slider, Tabs, SegmentedControl (T8–T9)
+- [x] Reduced-motion / reduced-transparency degradation (T10)
 - [ ] Multi-lens filters, WebGL for `<canvas>`/`<video>`, Firefox pass (T11–T13)
+
+## Status
+
+Milestones A–D from [docs/PLAN.md](docs/PLAN.md) are shipped. The engine, React binding, registry of components, packaging, CI, and degradation are all working. 45 tests pass across the two packages; `pnpm typecheck`, `pnpm test`, and `pnpm build` are all green.
+
+The optional milestone E (multi-lens, WebGL for media, Firefox pass) is still open.
 
 ## Credits
 
