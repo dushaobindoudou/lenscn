@@ -179,15 +179,25 @@ export class GlassFilter {
     this.filter.setAttribute('y', '0')
 
     // Neutral gray everywhere the lens image doesn't cover, so pixels
-    // outside the lens are not displaced.
-    this.el('feFlood', { 'flood-color': 'rgb(128,128,128)', 'flood-opacity': '1', result: 'mapBg' })
+    // outside the lens are not displaced. On Safari every primitive that
+    // can live in the lens subregion does — the per-frame id rotation
+    // re-evaluates the whole chain, so full-region passes are the budget.
+    this.el(
+      'feFlood',
+      { 'flood-color': 'rgb(128,128,128)', 'flood-opacity': '1', result: 'mapBg' },
+      IS_SAFARI,
+    )
     this.feImage = this.el(
       'feImage',
       { href: this.map.url, preserveAspectRatio: 'none', result: 'rawMap' },
       true,
     )
     this.feImage.setAttributeNS(XLINK_NS, 'xlink:href', this.map.url)
-    this.el('feComposite', { in: 'rawMap', in2: 'mapBg', operator: 'over', result: 'map' })
+    this.el(
+      'feComposite',
+      { in: 'rawMap', in2: 'mapBg', operator: 'over', result: 'map' },
+      IS_SAFARI,
+    )
 
     let source = 'SourceGraphic'
     if (blur > 0) {
@@ -291,12 +301,10 @@ export class GlassFilter {
       }
     }
 
-    // Punch the lens rect out of the source, then lay the refracted lens
-    // back over the hole. lensResult is clipped to the lens subregion, so
-    // everything outside it shows the untouched source.
-    this.el('feFlood', { 'flood-color': 'black', 'flood-opacity': '1', result: 'lensMask' }, true)
-    this.el('feComposite', { in: 'SourceGraphic', in2: 'lensMask', operator: 'out', result: 'holedSG' })
-    this.el('feComposite', { in: 'lensResult', in2: 'holedSG', operator: 'over' })
+    // lensResult is opaque and clipped to the lens subregion, so a single
+    // 'over' against the source replaces the lens rect and leaves the rest
+    // untouched — no hole-punch pass needed.
+    this.el('feComposite', { in: 'lensResult', in2: 'SourceGraphic', operator: 'over' })
 
     this.sizeLensScoped()
     this.setPosition(this.cx, this.cy)

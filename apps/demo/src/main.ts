@@ -20,9 +20,10 @@ const shape = {
   edgeStrength: 0.25,
 }
 
+// Tuned to match the Aave article demo defaults (chroma 0.20).
 const look = {
-  scale: 60,
-  chroma: 0.4,
+  scale: 52,
+  chroma: 0.2,
   blur: 0,
   specularStrength: 1,
 }

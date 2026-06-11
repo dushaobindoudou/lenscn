@@ -32,16 +32,18 @@ main {
   overflow: hidden;
 }
 
+/* Soft discs via radial-gradient, not filter:blur — a nested blur inside
+   the filtered element forces Safari to re-render it on every filter
+   re-evaluation, which tanks lens motion. */
 .blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.55;
+  opacity: 0.65;
   pointer-events: none;
 }
-.blob-a { width: 420px; height: 420px; background: #6c5ce7; top: -120px; left: -80px; }
-.blob-b { width: 360px; height: 360px; background: #00b8d9; bottom: -100px; right: 10%; }
-.blob-c { width: 300px; height: 300px; background: #e84393; top: 30%; left: 55%; }
+.blob-a { width: 640px; height: 640px; background: radial-gradient(circle, #6c5ce7 0%, rgba(108, 92, 231, 0) 65%); top: -230px; left: -190px; }
+.blob-b { width: 560px; height: 560px; background: radial-gradient(circle, #00b8d9 0%, rgba(0, 184, 217, 0) 65%); bottom: -200px; right: 2%; }
+.blob-c { width: 460px; height: 460px; background: radial-gradient(circle, #e84393 0%, rgba(232, 67, 147, 0) 65%); top: 22%; left: 48%; }
 
 header { position: relative; }
 h1 { font-size: 64px; letter-spacing: -0.03em; }

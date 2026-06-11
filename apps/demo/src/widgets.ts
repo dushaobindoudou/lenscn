@@ -21,7 +21,7 @@ export function initSwitch(root: HTMLElement): void {
     glowStrength: 0.45,
     edgeStrength: 0.3,
   })
-  const glass = new GlassFilter(track, map, { scale: 26, chroma: 0.35, specularStrength: 1.2 })
+  const glass = new GlassFilter(track, map, { scale: 26, chroma: 0.2, specularStrength: 1.2 })
 
   const trackW = 148
   const trackH = 76
@@ -82,7 +82,7 @@ export function initSlider(root: HTMLElement): void {
     glowStrength: 0.4,
     edgeStrength: 0.3,
   })
-  const glass = new GlassFilter(track, map, { scale: 30, chroma: 0.5, specularStrength: 1.1 })
+  const glass = new GlassFilter(track, map, { scale: 30, chroma: 0.2, specularStrength: 1.1 })
 
   const trackW = 320
   const trackH = 60
