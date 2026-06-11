@@ -65,6 +65,7 @@ export class GlassFilter {
   private cx = 0
   private cy = 0
   private refreshQueued = false
+  private regionPad = 0
 
   constructor(target: HTMLElement, map: LensMap, options: GlassFilterOptions = {}) {
     this.target = target
@@ -119,6 +120,7 @@ export class GlassFilter {
     if (this.feImage) {
       this.feImage.setAttribute('href', map.url)
       this.feImage.setAttributeNS(XLINK_NS, 'xlink:href', map.url)
+      this.syncRegion()
       this.sizeLensScoped()
       this.setPosition(this.cx, this.cy)
       this.rotateId()
@@ -138,10 +140,19 @@ export class GlassFilter {
     this.target.style.willChange = ''
   }
 
+  /**
+   * The filter region extends past the element by half a lens plus a
+   * margin: if the lens subregion ever crosses the region boundary,
+   * Safari drops the whole filter output and the element goes blank.
+   */
   private syncRegion(): void {
+    this.regionPad = Math.ceil(Math.max(this.map.width, this.map.height) / 2) + 8
     const rect = this.target.getBoundingClientRect()
-    this.filter.setAttribute('width', String(Math.max(1, rect.width)))
-    this.filter.setAttribute('height', String(Math.max(1, rect.height)))
+    const pad = this.regionPad
+    this.filter.setAttribute('x', String(-pad))
+    this.filter.setAttribute('y', String(-pad))
+    this.filter.setAttribute('width', String(Math.max(1, rect.width) + 2 * pad))
+    this.filter.setAttribute('height', String(Math.max(1, rect.height) + 2 * pad))
   }
 
   private rotateId(): void {
@@ -175,8 +186,7 @@ export class GlassFilter {
     this.filter.setAttribute('filterUnits', 'userSpaceOnUse')
     this.filter.setAttribute('primitiveUnits', 'userSpaceOnUse')
     this.filter.setAttribute('color-interpolation-filters', 'sRGB')
-    this.filter.setAttribute('x', '0')
-    this.filter.setAttribute('y', '0')
+    this.syncRegion()
 
     // Neutral gray everywhere the lens image doesn't cover, so pixels
     // outside the lens are not displaced. On Safari every primitive that
