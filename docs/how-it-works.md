@@ -101,6 +101,13 @@ Primitives marked `[lens]` carry an explicit **primitive subregion**
   varies by version/platform. Stay conservative with filtered-element size.
 - **Safari never feeds `<video>` pixels to SVG filters** (GPU-composited).
   Videos need a WebGL renderer driven by the same displacement map.
+- **Safari blanks the whole filter when a primitive subregion crosses the
+  filter region boundary** (found empirically; Chromium just clips). Pad
+  the filter region by half a lens plus margin on every side so the lens
+  subregion always stays inside.
+- **Nested filters inside the filtered element are poison on Safari**: the
+  per-frame id rotation re-rasterizes the SourceGraphic, including any
+  `filter: blur()` descendants, every frame. Use gradients instead.
 - Filter region tracks the element's size (`ResizeObserver`),
   `filterUnits`/`primitiveUnits` = `userSpaceOnUse`.
 
