@@ -1,0 +1,45 @@
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #0b0d12;
+  color: #e8eaf0;
+  min-height: 100vh;
+}
+
+.demo { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.demo p { color: #aab0c0; margin-bottom: 32px; }
+.demo a { color: #8ab4ff; }
+.row { display: flex; gap: 24px; flex-wrap: wrap; }
+.card { flex: 1; min-width: 320px; background: #11141c; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; }
+.card h2 { font-size: 14px; color: #7c8499; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 18px; font-weight: 500; }
+
+/* Switch */
+.switch-root { cursor: pointer; touch-action: none; outline-offset: 4px; }
+.switch-root:focus-visible { outline: 2px solid #8ab4ff; border-radius: 38px; }
+.switch-track {
+  position: relative;
+  width: 148px;
+  height: 76px;
+  border-radius: 38px;
+  background: linear-gradient(180deg, #2b303d, #3a4150);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+  transition: background 0.25s ease;
+}
+.switch-root[aria-checked='true'] .switch-track {
+  background: linear-gradient(180deg, #1f9d4d, #2fce6f);
+}
+
+/* Slider */
+.slider-root { cursor: ew-resize; touch-action: none; outline-offset: 4px; }
+.slider-root:focus-visible { outline: 2px solid #8ab4ff; border-radius: 30px; }
+.slider-track {
+  position: relative;
+  width: 320px;
+  height: 60px;
+  border-radius: 30px;
+  --p: 40%;
+  background: linear-gradient(90deg, #6c5ce7 var(--p), #262c3a var(--p));
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+}
