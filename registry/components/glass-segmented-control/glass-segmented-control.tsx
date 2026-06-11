@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Glass } from '@lenscn/react'
+import { isSupported, prefersReducedMotion } from 'lenscn'
 
 export interface SegmentedOption<T extends string = string> {
   value: T
@@ -26,6 +27,10 @@ function easeOutCubic(t: number): number {
  * Segmented control with a refracting glass lens that slides between
  * options. One filter, the lens position animates between items — no
  * map regen on selection change.
+ *
+ * Degradation: when the glass effect is unavailable the lens is replaced
+ * by a solid highlight pill. Under `prefers-reduced-motion: reduce` the
+ * lens jumps to the active option without easing.
  */
 export function GlassSegmentedControl<T extends string = string>({
   options,
@@ -42,9 +47,12 @@ export function GlassSegmentedControl<T extends string = string>({
   const containerRef = useRef<HTMLDivElement>(null)
   const labelRefs = useRef(new Map<T, HTMLButtonElement>())
   const [lens, setLens] = useState<{ x: number; y: number; w: number; h: number } | null>(null)
+  const [glass] = useState(() => isSupported())
   const anim = useRef(0)
 
-  // Measure the active label, then tween the lens to it.
+  // Measure the active label, then tween the lens to it. Only x/y are
+  // eased — the lens size snaps to the target so the displacement map
+  // regenerates at most once per selection, never per animation frame.
   useLayoutEffect(() => {
     const el = labelRefs.current.get(value)
     if (!el) return
@@ -56,7 +64,7 @@ export function GlassSegmentedControl<T extends string = string>({
       w: rect.width + lensPadding * 2,
       h: rect.height + lensPadding * 2,
     }
-    if (!lens) {
+    if (!lens || prefersReducedMotion()) {
       setLens(next)
       return
     }
@@ -70,8 +78,8 @@ export function GlassSegmentedControl<T extends string = string>({
       setLens({
         x: from.x + (next.x - from.x) * k,
         y: from.y + (next.y - from.y) * k,
-        w: from.w + (next.w - from.w) * k,
-        h: from.h + (next.h - from.h) * k,
+        w: next.w,
+        h: next.h,
       })
       if (t < 1) anim.current = requestAnimationFrame(tick)
     }
@@ -124,7 +132,7 @@ export function GlassSegmentedControl<T extends string = string>({
       className={className}
       style={{ position: 'relative', display: 'inline-flex', gap: 4 }}
     >
-      {lens && (
+      {lens && glass && (
         <Glass
           lens={{ width: lens.w, height: lens.h, borderRadius: lens.h / 2, depth: 14, domeDepth: 6, glowStrength: 0.4, edgeStrength: 0.25 }}
           look={{ scale: 22, chroma: 0.2, specularStrength: 1.1 }}
@@ -132,6 +140,21 @@ export function GlassSegmentedControl<T extends string = string>({
           y={lens.y}
           as="span"
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        />
+      )}
+      {lens && !glass && (
+        <span
+          data-fallback-handle
+          style={{
+            position: 'absolute',
+            left: `${lens.x - lens.w / 2}px`,
+            top: `${lens.y - lens.h / 2}px`,
+            width: `${lens.w}px`,
+            height: `${lens.h}px`,
+            borderRadius: `${lens.h / 2}px`,
+            background: 'rgba(255,255,255,0.14)',
+            pointerEvents: 'none',
+          }}
         />
       )}
       {options.map((opt) => {

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import { Glass } from '@lenscn/react'
+import { isSupported, prefersReducedMotion } from 'lenscn'
 
 export interface GlassTab {
   value: string
@@ -35,6 +36,10 @@ function easeOutCubic(t: number): number {
  *
  * WAI-ARIA tablist: arrow keys move the active tab, Home/End jump to
  * the ends, the panel is the tabpanel labelled by the active tab.
+ *
+ * Degradation: when the glass effect is unavailable the lens is replaced
+ * by a solid highlight pill. Under `prefers-reduced-motion: reduce` the
+ * lens jumps to the active tab without easing.
  */
 export function GlassTabs({
   tabs,
@@ -51,9 +56,12 @@ export function GlassTabs({
   const tablistRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef(new Map<string, HTMLButtonElement>())
   const [lens, setLens] = useState<{ x: number; y: number; w: number; h: number } | null>(null)
+  const [glass] = useState(() => isSupported())
   const anim = useRef(0)
 
-  // Slide the lens to the active tab.
+  // Slide the lens to the active tab. Only x/y are eased — the lens
+  // size snaps to the target so the displacement map regenerates at
+  // most once per tab change, never per animation frame.
   useLayoutEffect(() => {
     const el = tabRefs.current.get(value)
     if (!el || !tablistRef.current) return
@@ -65,7 +73,7 @@ export function GlassTabs({
       w: rect.width,
       h: rect.height,
     }
-    if (!lens) {
+    if (!lens || prefersReducedMotion()) {
       setLens(next)
       return
     }
@@ -79,8 +87,8 @@ export function GlassTabs({
       setLens({
         x: from.x + (next.x - from.x) * k,
         y: from.y + (next.y - from.y) * k,
-        w: from.w + (next.w - from.w) * k,
-        h: from.h + (next.h - from.h) * k,
+        w: next.w,
+        h: next.h,
       })
       if (t < 1) anim.current = requestAnimationFrame(tick)
     }
@@ -134,7 +142,7 @@ export function GlassTabs({
         onKeyDown={onKey}
         style={{ position: 'relative', display: 'inline-flex', gap: 4, borderBottom: '1px solid rgba(255,255,255,0.1)' }}
       >
-        {lens && (
+        {lens && glass && (
           <Glass
             lens={{ width: lens.w, height: lens.h, borderRadius: 12, depth: 12, domeDepth: 6, glowStrength: 0.4, edgeStrength: 0.3 }}
             look={{ scale: 20, chroma: 0.2, specularStrength: 1.1 }}
@@ -142,6 +150,21 @@ export function GlassTabs({
             y={lens.y}
             as="span"
             style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+          />
+        )}
+        {lens && !glass && (
+          <span
+            data-fallback-handle
+            style={{
+              position: 'absolute',
+              left: `${lens.x - lens.w / 2}px`,
+              top: `${lens.y - lens.h / 2}px`,
+              width: `${lens.w}px`,
+              height: `${lens.h}px`,
+              borderRadius: '12px',
+              background: 'rgba(255,255,255,0.14)',
+              pointerEvents: 'none',
+            }}
           />
         )}
         {tabs.map((t) => {
@@ -155,6 +178,7 @@ export function GlassTabs({
               }}
               type="button"
               role="tab"
+              id={`tab-${t.value}`}
               aria-selected={selected}
               aria-controls={`tabpanel-${t.value}`}
               tabIndex={selected ? 0 : -1}

@@ -1,6 +1,10 @@
-import { describe, it, expect, beforeAll, afterEach } from 'vitest'
-import { render, cleanup } from '@testing-library/react'
+import { describe, it, expect, beforeAll, afterEach, vi } from 'vitest'
+import { render, cleanup, fireEvent } from '@testing-library/react'
 import { Glass } from '../glass'
+import { GlassSwitch } from '../../../../registry/components/glass-switch/glass-switch'
+import { GlassSlider } from '../../../../registry/components/glass-slider/glass-slider'
+import { GlassTabs } from '../../../../registry/components/glass-tabs/glass-tabs'
+import { GlassSegmentedControl } from '../../../../registry/components/glass-segmented-control/glass-segmented-control'
 
 function setMatchMedia(matches: (query: string) => boolean) {
   Object.defineProperty(window, 'matchMedia', {
@@ -64,6 +68,70 @@ describe('Glass under prefers-reduced-transparency', () => {
       (svg) => svg.getAttribute('aria-hidden') === 'true',
     )
     expect(svgs.length).toBe(0)
+  })
+})
+
+describe('registry components under prefers-reduced-transparency', () => {
+  it('GlassSwitch renders a solid fallback handle and still toggles', () => {
+    setMatchMedia((q) => q.includes('reduced-transparency'))
+    const onChange = vi.fn()
+    const { getByRole, container } = render(<GlassSwitch onCheckedChange={onChange} />)
+    expect(container.querySelector('[data-fallback-handle]')).toBeTruthy()
+    const sw = getByRole('switch')
+    fireEvent.keyDown(sw, { key: ' ' })
+    expect(onChange).toHaveBeenCalledWith(true)
+    expect(sw.getAttribute('aria-checked')).toBe('true')
+  })
+
+  it('GlassSlider renders a solid fallback handle and arrows still work', () => {
+    setMatchMedia((q) => q.includes('reduced-transparency'))
+    const onChange = vi.fn()
+    const { getByRole, container } = render(
+      <GlassSlider defaultValue={0.4} step={0.1} onValueChange={onChange} />,
+    )
+    expect(container.querySelector('[data-fallback-handle]')).toBeTruthy()
+    fireEvent.keyDown(getByRole('slider'), { key: 'ArrowRight' })
+    expect(onChange).toHaveBeenLastCalledWith(0.5)
+  })
+
+  it('GlassTabs renders a solid highlight and keyboard still works', () => {
+    setMatchMedia((q) => q.includes('reduced-transparency'))
+    const tabs = [
+      { value: 'a', label: 'A', content: 'panel a' },
+      { value: 'b', label: 'B', content: 'panel b' },
+    ]
+    const { container, getAllByRole } = render(<GlassTabs tabs={tabs} />)
+    expect(container.querySelector('[data-fallback-handle]')).toBeTruthy()
+    const [first] = getAllByRole('tab')
+    fireEvent.keyDown(first.parentElement!, { key: 'ArrowRight' })
+    expect(getAllByRole('tab')[1].getAttribute('aria-selected')).toBe('true')
+  })
+
+  it('GlassSegmentedControl renders a solid highlight and keyboard still works', () => {
+    setMatchMedia((q) => q.includes('reduced-transparency'))
+    const options = [
+      { value: 'x', label: 'X' },
+      { value: 'y', label: 'Y' },
+    ]
+    const { container, getAllByRole } = render(<GlassSegmentedControl options={options} />)
+    expect(container.querySelector('[data-fallback-handle]')).toBeTruthy()
+    fireEvent.keyDown(getAllByRole('tab')[0].parentElement!, { key: 'ArrowRight' })
+    expect(getAllByRole('tab')[1].getAttribute('aria-selected')).toBe('true')
+  })
+})
+
+describe('registry components under prefers-reduced-motion', () => {
+  it('GlassSwitch handle jumps to the target without easing', () => {
+    // Reduced transparency too, so the handle position is observable
+    // through the fallback element.
+    setMatchMedia(
+      (q) => q.includes('reduced-transparency') || q.includes('reduced-motion'),
+    )
+    const { getByRole, container } = render(<GlassSwitch width={148} height={76} />)
+    fireEvent.click(getByRole('switch'))
+    const handle = container.querySelector('[data-fallback-handle]') as HTMLElement
+    // progress=1 → lensX = 38 + 72 = 110, handle left = 110 - 32 = 78.
+    expect(handle.style.left).toBe('78px')
   })
 })
 

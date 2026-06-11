@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef, useState, type PointerEvent, type KeyboardEvent } from 'react'
+import { useRef, useState, type CSSProperties, type PointerEvent, type KeyboardEvent } from 'react'
 import { Glass } from '@lenscn/react'
+import { isSupported } from 'lenscn'
 
 export interface GlassSliderProps {
   /** Controlled value, 0..1. */
@@ -21,10 +22,25 @@ export interface GlassSliderProps {
   className?: string
 }
 
+function trackStyle(value: number, width: number, height: number): CSSProperties {
+  return {
+    position: 'relative',
+    display: 'inline-block',
+    width: `${width}px`,
+    height: `${height}px`,
+    background: `linear-gradient(90deg, #6c5ce7 ${value * 100}%, #262c3a ${value * 100}%)`,
+    borderRadius: `${height / 2}px`,
+  }
+}
+
 /**
  * Range slider with a refracting glass handle. Drag the handle, or
  * focus the slider and use the arrow keys. Value is normalized to
  * 0..1; consumers map to their own range.
+ *
+ * Degradation: when the glass effect is unavailable (no SVG filter
+ * support, or `prefers-reduced-transparency: reduce`) the slider renders
+ * the plain track with a solid handle instead.
  */
 export function GlassSlider({
   value: controlled,
@@ -38,6 +54,7 @@ export function GlassSlider({
 }: GlassSliderProps) {
   const [uncontrolled, setUncontrolled] = useState(defaultValue)
   const value = controlled ?? uncontrolled
+  const [glass] = useState(() => isSupported())
   const dragging = useRef(false)
   const root = useRef<HTMLDivElement>(null)
 
@@ -100,27 +117,40 @@ export function GlassSlider({
       className={className}
       style={{ display: 'inline-block', cursor: disabled ? 'not-allowed' : 'ew-resize', opacity: disabled ? 0.5 : 1 }}
     >
-      <Glass
-        lens={{
-          width: lensH,
-          height: lensH,
-          borderRadius: lensH / 2,
-          depth: 16,
-          domeDepth: 6,
-          glowStrength: 0.4,
-          edgeStrength: 0.3,
-        }}
-        look={{ scale: 30, chroma: 0.2, specularStrength: 1.1 }}
-        x={lensX}
-        y={height / 2}
-        as="span"
-        style={{
-          width: `${width}px`,
-          height: `${height}px`,
-          background: `linear-gradient(90deg, #6c5ce7 ${value * 100}%, #262c3a ${value * 100}%)`,
-          borderRadius: `${height / 2}px`,
-        }}
-      />
+      {glass ? (
+        <Glass
+          lens={{
+            width: lensH,
+            height: lensH,
+            borderRadius: lensH / 2,
+            depth: 16,
+            domeDepth: 6,
+            glowStrength: 0.4,
+            edgeStrength: 0.3,
+          }}
+          look={{ scale: 30, chroma: 0.2, specularStrength: 1.1 }}
+          x={lensX}
+          y={height / 2}
+          as="span"
+          style={trackStyle(value, width, height)}
+        />
+      ) : (
+        <span style={trackStyle(value, width, height)}>
+          <span
+            data-fallback-handle
+            style={{
+              position: 'absolute',
+              left: `${lensX - (lensH - 8) / 2}px`,
+              top: `${(height - (lensH - 8)) / 2}px`,
+              width: `${lensH - 8}px`,
+              height: `${lensH - 8}px`,
+              borderRadius: '50%',
+              background: '#fff',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
+            }}
+          />
+        </span>
+      )}
     </div>
   )
 }
