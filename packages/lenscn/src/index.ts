@@ -1,4 +1,4 @@
-export { generateLensMap, writeLensMapPixels } from './lens-map'
+export { generateLensMap, releaseLensMap, writeLensMapPixels } from './lens-map'
 export type { LensMap, LensMapOptions } from './lens-map'
 export { GlassFilter } from './glass-filter'
 export type { GlassFilterOptions } from './glass-filter'

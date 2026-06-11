@@ -482,9 +482,24 @@ export function writeLensMapPixelsNaive(data: Uint8ClampedArray, options: LensMa
  *
  * feDisplacementMap shifts each output pixel's sample point by
  * scale * (channel/255 − 0.5), so values above 128 sample to the right/down.
+ *
+ * Maps are cached by canonical options: two calls with the same
+ * effective options share the same LensMap (and PNG data URL). Use
+ * `releaseLensMap()` to drop the refcount when you're done with one —
+ * the entry is purged when the count hits 0.
  */
 export function generateLensMap(options: LensMapOptions): LensMap {
   const o = { ...DEFAULTS, ...options }
+  // For cache identity, normalize depth to its effective value (the
+  // `?? Math.min(halfW, halfH) * 0.5` fallback that writeLensMapPixels
+  // would apply) so two calls without an explicit depth share a map.
+  const key = canonicalKey(o)
+  const entry = cache.get(key)
+  if (entry) {
+    entry.refcount++
+    return entry.map
+  }
+
   const size = o.resolution
   const cornerR = Math.min(o.borderRadius, Math.min(o.width / 2, o.height / 2))
 
@@ -500,7 +515,7 @@ export function generateLensMap(options: LensMapOptions): LensMap {
   const generateMs = performance.now() - started
 
   ctx.putImageData(image, 0, 0)
-  return {
+  const map: LensMap = {
     url: canvas.toDataURL('image/png'),
     resolution: size,
     width: o.width,
@@ -508,4 +523,60 @@ export function generateLensMap(options: LensMapOptions): LensMap {
     borderRadius: cornerR,
     generateMs,
   }
+  cache.set(key, { map, refcount: 1 })
+  return map
+}
+
+/**
+ * Releases one refcount of a previously generated map. When the refcount
+ * reaches 0 the entry is removed from the cache.
+ */
+export function releaseLensMap(map: LensMap): void {
+  const key = mapKey(map)
+  const entry = key ? cache.get(key) : undefined
+  if (!entry || entry.map !== map) return
+  entry.refcount--
+  if (entry.refcount <= 0 && key) cache.delete(key)
+}
+
+interface CacheEntry {
+  map: LensMap
+  refcount: number
+}
+
+const cache = new Map<string, CacheEntry>()
+
+function canonicalKey(o: { width: number; height: number; depth?: number } & Record<string, unknown>): string {
+  // The defaults-fill in generateLensMap is the source of truth: we
+  // only need to match options that affect the pixel output, in a
+  // deterministic order with finite-precision numbers. `depth` is
+  // optional; treat undefined as the `?? min(halfW,halfH)*0.5` fallback
+  // that writeLensMapPixels would apply, encoded as a sentinel string.
+  const depthSentinel = o.depth === undefined ? `auto:${o.width}:${o.height}` : String(o.depth)
+  const parts = [
+    o.width,
+    o.height,
+    o.borderRadius,
+    o.resolution,
+    depthSentinel,
+    o.domeDepth,
+    o.splay,
+    o.clipToShape ? 1 : 0,
+    o.edgeFalloff ? 1 : 0,
+    o.specularAngle,
+    o.glowStrength,
+    o.glowSpread,
+    o.glowExponent,
+    o.edgeStrength,
+    o.edgeWidth,
+    o.edgeExponent,
+  ]
+  return parts.join('|')
+}
+
+function mapKey(map: LensMap): string | null {
+  for (const [k, entry] of cache) {
+    if (entry.map === map) return k
+  }
+  return null
 }

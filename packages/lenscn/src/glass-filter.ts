@@ -1,4 +1,5 @@
 import type { LensMap } from './lens-map'
+import { releaseLensMap } from './lens-map'
 
 export interface GlassFilterOptions {
   /** Peak displacement in CSS px. */
@@ -116,6 +117,7 @@ export class GlassFilter {
 
   /** Swap the displacement map (shape change). Rotates the filter id. */
   setLensMap(map: LensMap): void {
+    if (map !== this.map) releaseLensMap(this.map)
     this.map = map
     if (this.feImage) {
       this.feImage.setAttribute('href', map.url)
@@ -138,6 +140,7 @@ export class GlassFilter {
     this.svg.remove()
     this.target.style.filter = ''
     this.target.style.willChange = ''
+    releaseLensMap(this.map)
   }
 
   /**
