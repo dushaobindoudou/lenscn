@@ -84,6 +84,9 @@ Full execution plan with per-task goals and acceptance criteria:
 - [x] React `<Glass>` binding (T7)
 - [x] shadcn-style component registry: Switch, Slider, Tabs, SegmentedControl (T8–T9)
 - [x] Reduced-motion / reduced-transparency degradation (T10)
+- [x] Design system: [DESIGN.md](DESIGN.md) — tokens, Glass Grammar, lens presets
+- [ ] Component layer: Button/Card/Forms/SidebarNav/DataTable/Overlays/Charts ([docs/PLAN-COMPONENTS.md](docs/PLAN-COMPONENTS.md), F1–F8)
+- [ ] Dashboard demo built 100% from registry components (G1–G3)
 - [ ] Multi-lens filters, WebGL for `<canvas>`/`<video>`, Firefox pass (T11–T13)
 
 ## Status
