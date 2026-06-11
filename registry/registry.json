@@ -30,6 +30,34 @@
       ],
       "dependencies": ["@lenscn/react", "lenscn"],
       "registryDependencies": []
+    },
+    {
+      "name": "glass-segmented-control",
+      "type": "registry:component",
+      "title": "Glass Segmented Control",
+      "description": "A segmented control whose refracting glass lens slides between options. One filter, no map regen on selection change.",
+      "files": [
+        {
+          "path": "registry/components/glass-segmented-control/glass-segmented-control.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": ["@lenscn/react", "lenscn"],
+      "registryDependencies": []
+    },
+    {
+      "name": "glass-tabs",
+      "type": "registry:component",
+      "title": "Glass Tabs",
+      "description": "Tabs with a refracting glass lens that slides between labels. WAI-ARIA tablist pattern, animated lens, no map regen.",
+      "files": [
+        {
+          "path": "registry/components/glass-tabs/glass-tabs.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": ["@lenscn/react", "lenscn"],
+      "registryDependencies": []
     }
   ]
 }
