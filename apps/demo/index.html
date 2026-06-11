@@ -34,6 +34,25 @@
         </div>
       </section>
       <aside id="controls"></aside>
+      <section id="widgets">
+        <div class="widget">
+          <div id="glass-switch" role="switch" aria-checked="false" tabindex="0">
+            <div class="switch-track">
+              <span class="switch-glyph on">|</span>
+              <span class="switch-glyph off">○</span>
+            </div>
+          </div>
+          <p class="widget-caption">Switch — a glass handle slides over the live track. Click it.</p>
+        </div>
+        <div class="widget">
+          <div id="glass-slider" role="slider" aria-valuemin="0" aria-valuemax="100" tabindex="0">
+            <div class="slider-track">
+              <span class="slider-ticks">0&nbsp;&nbsp;·&nbsp;&nbsp;25&nbsp;&nbsp;·&nbsp;&nbsp;50&nbsp;&nbsp;·&nbsp;&nbsp;75&nbsp;&nbsp;·&nbsp;&nbsp;100</span>
+            </div>
+          </div>
+          <p class="widget-caption">Slider — drag; the glass refracts the fill edge as it crosses.</p>
+        </div>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

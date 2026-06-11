@@ -24,6 +24,16 @@ const DEFAULTS: Required<GlassFilterOptions> = {
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const XLINK_NS = 'http://www.w3.org/1999/xlink'
 
+// Safari caches SVG filter output by filter id: attribute updates alone do
+// not invalidate it, so a moving lens freezes. Every update there must
+// rotate the id. It also pays full-region cost for primitives that don't
+// declare a subregion, so we scope more of the chain to the lens on Safari.
+// (Chromium shows subregion edge artifacts on the specular pass, so it
+// keeps the wider scope.)
+const IS_SAFARI =
+  typeof navigator !== 'undefined' &&
+  /^((?!chrome|chromium|android).)*safari/i.test(navigator.userAgent)
+
 let nextUid = 0
 
 /**
@@ -54,6 +64,7 @@ export class GlassFilter {
   private version = 0
   private cx = 0
   private cy = 0
+  private refreshQueued = false
 
   constructor(target: HTMLElement, map: LensMap, options: GlassFilterOptions = {}) {
     this.target = target
@@ -73,6 +84,7 @@ export class GlassFilter {
 
     this.resizeObserver = new ResizeObserver(() => this.syncRegion())
     this.resizeObserver.observe(target)
+    target.style.willChange = 'filter'
 
     this.rebuild()
     this.syncRegion()
@@ -88,6 +100,17 @@ export class GlassFilter {
       el.setAttribute('x', left)
       el.setAttribute('y', top)
     }
+    if (IS_SAFARI) this.queueRefresh()
+  }
+
+  /** Coalesce Safari id rotations to one per frame. */
+  private queueRefresh(): void {
+    if (this.refreshQueued) return
+    this.refreshQueued = true
+    requestAnimationFrame(() => {
+      this.refreshQueued = false
+      this.rotateId()
+    })
   }
 
   /** Swap the displacement map (shape change). Rotates the filter id. */
@@ -112,6 +135,7 @@ export class GlassFilter {
     this.resizeObserver.disconnect()
     this.svg.remove()
     this.target.style.filter = ''
+    this.target.style.willChange = ''
   }
 
   private syncRegion(): void {
@@ -191,10 +215,10 @@ export class GlassFilter {
           },
           true,
         )
-        this.el('feColorMatrix', { type: 'matrix', values: matrix, result: `disp${i}` })
+        this.el('feColorMatrix', { type: 'matrix', values: matrix, result: `disp${i}` }, IS_SAFARI)
       })
-      this.el('feComposite', { in: 'disp0', in2: 'disp1', operator: 'arithmetic', k1: '0', k2: '1', k3: '1', k4: '0' })
-      this.el('feComposite', { in2: 'disp2', operator: 'arithmetic', k1: '0', k2: '1', k3: '1', k4: '0', result: 'lensResult' })
+      this.el('feComposite', { in: 'disp0', in2: 'disp1', operator: 'arithmetic', k1: '0', k2: '1', k3: '1', k4: '0' }, IS_SAFARI)
+      this.el('feComposite', { in2: 'disp2', operator: 'arithmetic', k1: '0', k2: '1', k3: '1', k4: '0', result: 'lensResult' }, IS_SAFARI)
     } else {
       this.el(
         'feDisplacementMap',
@@ -214,40 +238,56 @@ export class GlassFilter {
       if (specularDark) {
         const s = specularStrength
         const row = `0 0 ${-s} 0 ${1 + (128 * s) / 255}`
-        this.el('feColorMatrix', {
-          in: 'map',
-          type: 'matrix',
-          values: `${row}  ${row}  ${row}  0 0 0 0 1`,
-          result: 'specMask',
-        })
-        this.el('feComposite', {
-          in: 'specMask',
-          in2: 'lensResult',
-          operator: 'arithmetic',
-          k1: '1',
-          k2: '0',
-          k3: '0',
-          k4: '0',
-          result: 'lensResult',
-        })
+        this.el(
+          'feColorMatrix',
+          {
+            in: 'map',
+            type: 'matrix',
+            values: `${row}  ${row}  ${row}  0 0 0 0 1`,
+            result: 'specMask',
+          },
+          IS_SAFARI,
+        )
+        this.el(
+          'feComposite',
+          {
+            in: 'specMask',
+            in2: 'lensResult',
+            operator: 'arithmetic',
+            k1: '1',
+            k2: '0',
+            k3: '0',
+            k4: '0',
+            result: 'lensResult',
+          },
+          IS_SAFARI,
+        )
       } else {
         // White, with alpha lifted from the map's blue channel (>128).
-        this.el('feColorMatrix', {
-          in: 'map',
-          type: 'matrix',
-          values: `0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 ${-128 / 255}`,
-          result: 'specMask',
-        })
-        this.el('feComposite', {
-          in: 'specMask',
-          in2: 'lensResult',
-          operator: 'arithmetic',
-          k1: '0',
-          k2: String(specularStrength),
-          k3: '1',
-          k4: '0',
-          result: 'lensResult',
-        })
+        this.el(
+          'feColorMatrix',
+          {
+            in: 'map',
+            type: 'matrix',
+            values: `0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 ${-128 / 255}`,
+            result: 'specMask',
+          },
+          IS_SAFARI,
+        )
+        this.el(
+          'feComposite',
+          {
+            in: 'specMask',
+            in2: 'lensResult',
+            operator: 'arithmetic',
+            k1: '0',
+            k2: String(specularStrength),
+            k3: '1',
+            k4: '0',
+            result: 'lensResult',
+          },
+          IS_SAFARI,
+        )
       }
     }
 

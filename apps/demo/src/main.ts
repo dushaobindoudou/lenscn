@@ -1,5 +1,9 @@
 import { GlassFilter, generateLensMap } from 'lenscn'
 import type { LensMap } from 'lenscn'
+import { initSlider, initSwitch } from './widgets'
+
+initSwitch(document.getElementById('glass-switch')!)
+initSlider(document.getElementById('glass-slider')!)
 
 const content = document.getElementById('content')!
 const stage = document.getElementById('stage')!
