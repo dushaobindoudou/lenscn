@@ -35,6 +35,33 @@ const IS_SAFARI =
   typeof navigator !== 'undefined' &&
   /^((?!chrome|chromium|android).)*safari/i.test(navigator.userAgent)
 
+/**
+ * Returns true when the runtime can run the lens effect: SVG filters are
+ * supported and the user hasn't asked for reduced transparency. The
+ * `prefers-reduced-motion` media query is checked separately by
+ * `prefersReducedMotion()`.
+ */
+export function isSupported(): boolean {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return false
+  if (!('createElementNS' in document)) return false
+  // Try to construct an SVG filter element to confirm the runtime parses it.
+  const svg = document.createElementNS(SVG_NS, 'svg')
+  const filter = document.createElementNS(SVG_NS, 'filter')
+  svg.appendChild(filter)
+  // Reduced-transparency users see a flat fallback (no glass) — they get
+  // the simple track/handle and a working component, no effect.
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-transparency: reduce)').matches) {
+    return false
+  }
+  return true
+}
+
+/** True when the user prefers reduced motion. */
+export function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 let nextUid = 0
 
 /**
@@ -73,6 +100,18 @@ export class GlassFilter {
     this.map = map
     this.options = { ...DEFAULTS, ...options }
 
+    // If SVG filters are unsupported, or the user prefers reduced
+    // transparency, this filter is a no-op: the host element stays
+    // un-filtered and components render their plain fallback handle.
+    if (!isSupported()) {
+      this.svg = document.createElementNS(SVG_NS, 'svg')
+      this.svg.setAttribute('aria-hidden', 'true')
+      this.filter = document.createElementNS(SVG_NS, 'filter')
+      this.svg.appendChild(this.filter)
+      this.resizeObserver = new ResizeObserver(() => {})
+      return
+    }
+
     this.svg = document.createElementNS(SVG_NS, 'svg')
     this.svg.setAttribute('width', '0')
     this.svg.setAttribute('height', '0')
@@ -96,13 +135,15 @@ export class GlassFilter {
   setPosition(x: number, y: number): void {
     this.cx = x
     this.cy = y
+    // No-op when reduced-transparency or unsupported: nothing to update.
+    if (!this.svg.parentNode) return
     const left = String(x - this.map.width / 2)
     const top = String(y - this.map.height / 2)
     for (const el of this.lensScoped) {
       el.setAttribute('x', left)
       el.setAttribute('y', top)
     }
-    if (IS_SAFARI) this.queueRefresh()
+    if (IS_SAFARI && !prefersReducedMotion()) this.queueRefresh()
   }
 
   /** Coalesce Safari id rotations to one per frame. */
@@ -119,7 +160,7 @@ export class GlassFilter {
   setLensMap(map: LensMap): void {
     if (map !== this.map) releaseLensMap(this.map)
     this.map = map
-    if (this.feImage) {
+    if (this.feImage && this.svg.parentNode) {
       this.feImage.setAttribute('href', map.url)
       this.feImage.setAttributeNS(XLINK_NS, 'xlink:href', map.url)
       this.syncRegion()
@@ -132,12 +173,12 @@ export class GlassFilter {
   /** Update look parameters. Rebuilds the (small) filter DOM. */
   setOptions(options: GlassFilterOptions): void {
     this.options = { ...this.options, ...options }
-    this.rebuild()
+    if (this.svg.parentNode) this.rebuild()
   }
 
   dispose(): void {
     this.resizeObserver.disconnect()
-    this.svg.remove()
+    if (this.svg.parentNode) this.svg.remove()
     this.target.style.filter = ''
     this.target.style.willChange = ''
     releaseLensMap(this.map)
