@@ -1,0 +1,25 @@
+{
+  "name": "lenscn",
+  "version": "0.0.1",
+  "description": "True optical refraction glass for the web. SVG feDisplacementMap based, works in every modern browser.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "keywords": [
+    "glass",
+    "glassmorphism",
+    "liquid-glass",
+    "refraction",
+    "feDisplacementMap",
+    "svg-filter",
+    "ui"
+  ]
+}

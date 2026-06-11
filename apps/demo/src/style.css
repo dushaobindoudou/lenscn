@@ -1,0 +1,104 @@
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #0b0d12;
+  color: #e8eaf0;
+  min-height: 100vh;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+#stage {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+#content {
+  position: relative;
+  min-height: 80vh;
+  padding: 56px 48px;
+  background: #11141c;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.blob-a { width: 420px; height: 420px; background: #6c5ce7; top: -120px; left: -80px; }
+.blob-b { width: 360px; height: 360px; background: #00b8d9; bottom: -100px; right: 10%; }
+.blob-c { width: 300px; height: 300px; background: #e84393; top: 30%; left: 55%; }
+
+header { position: relative; }
+h1 { font-size: 64px; letter-spacing: -0.03em; }
+.tagline { font-size: 18px; color: #aab0c0; max-width: 480px; margin-top: 12px; line-height: 1.5; }
+
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.04);
+}
+.card h3 { font-size: 15px; margin-bottom: 8px; }
+.card p { font-size: 13px; color: #9aa1b5; line-height: 1.5; }
+
+.fineprint {
+  position: relative;
+  margin-top: 48px;
+  font-size: 13px;
+  color: #7c8499;
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+#controls {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  background: #11141c;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#controls h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #7c8499; }
+
+.control { display: flex; flex-direction: column; gap: 4px; }
+.control label { font-size: 12px; color: #aab0c0; display: flex; justify-content: space-between; }
+.control label output { color: #e8eaf0; font-variant-numeric: tabular-nums; }
+.control input[type='range'] { width: 100%; accent-color: #6c5ce7; }
+
+.control-toggle { flex-direction: row; align-items: center; gap: 8px; }
+.control-toggle label { font-size: 12px; color: #aab0c0; }
+
+#stats { font-size: 11px; color: #5d6478; line-height: 1.6; }
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+  #controls { position: static; }
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>lenscn — true refraction glass for the web</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main>
+      <section id="stage">
+        <div id="content">
+          <div class="blob blob-a"></div>
+          <div class="blob blob-b"></div>
+          <div class="blob blob-c"></div>
+          <header>
+            <h1>lenscn</h1>
+            <p class="tagline">
+              True optical refraction for the web. One SVG filter primitive,
+              every modern browser, no flags, no fallbacks.
+            </p>
+          </header>
+          <div class="grid">
+            <article class="card"><h3>Refraction</h3><p>The lens bends the page itself — live DOM, not a screenshot.</p></article>
+            <article class="card"><h3>Dispersion</h3><p>Three displacement taps split light by wavelength at the rim.</p></article>
+            <article class="card"><h3>Specular</h3><p>A highlight pass rides the blue channel of the same map.</p></article>
+            <article class="card"><h3>Fast</h3><p>Motion never regenerates the map — only the filter region moves.</p></article>
+          </div>
+          <p class="fineprint">
+            Move your pointer across this panel. The glass lens follows it and
+            refracts everything underneath: text, gradients, borders.
+            0123456789 — abcdefghijklmnopqrstuvwxyz
+          </p>
+        </div>
+      </section>
+      <aside id="controls"></aside>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
