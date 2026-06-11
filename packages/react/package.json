@@ -1,15 +1,26 @@
 {
   "name": "@lenscn/react",
   "version": "0.0.1",
-  "description": "React binding for lenscn — <Glass> component and useGlass hook.",
+  "description": "React binding for lenscn — <Glass> component and useGlass hook. True optical refraction glass, every modern browser.",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
   "scripts": {
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
@@ -26,7 +37,27 @@
     "happy-dom": "^15.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "tsup": "^8.0.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dushaobindoudou/lenscn.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://dushaobindoudou.github.io/lenscn/",
+  "bugs": "https://github.com/dushaobindoudou/lenscn/issues",
+  "keywords": [
+    "react",
+    "glass",
+    "glassmorphism",
+    "liquid-glass",
+    "refraction",
+    "displacement-map",
+    "svg-filter",
+    "ui",
+    "components",
+    "shadcn"
+  ]
 }
