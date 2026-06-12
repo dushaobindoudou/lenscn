@@ -114,6 +114,62 @@
       ],
       "dependencies": [],
       "registryDependencies": ["tokens"]
+    },
+    {
+      "name": "glass-checkbox",
+      "type": "registry:component",
+      "title": "Checkbox",
+      "description": "Matte 20×20 checkbox. Controlled/uncontrolled, mixed state, Space toggles, accent fill with checkmark.",
+      "files": [
+        {
+          "path": "registry/components/glass-checkbox/glass-checkbox.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
+    },
+    {
+      "name": "glass-field",
+      "type": "registry:component",
+      "title": "Field / Label",
+      "description": "Matte form field wrapper (Field) with caption-style Label and optional error line. Wires htmlFor/id and aria-describedby via useId.",
+      "files": [
+        {
+          "path": "registry/components/glass-field/glass-field.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
+    },
+    {
+      "name": "glass-input",
+      "type": "registry:component",
+      "title": "Input / Textarea",
+      "description": "Matte text input and textarea. Surface-2 background, border-strong border, sm/md/lg sizes, invalid state, focus ring.",
+      "files": [
+        {
+          "path": "registry/components/glass-input/glass-input.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
+    },
+    {
+      "name": "glass-native-select",
+      "type": "registry:component",
+      "title": "NativeSelect",
+      "description": "Matte native <select> with a custom inline-SVG chevron. sm/md/lg sizes, invalid state, options prop or children.",
+      "files": [
+        {
+          "path": "registry/components/glass-native-select/glass-native-select.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
     }
   ]
 }

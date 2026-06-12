@@ -7,6 +7,10 @@ import { GlassTabs } from '../../../registry/components/glass-tabs/glass-tabs'
 import { Button } from '../../../registry/components/glass-button/glass-button'
 import { Badge } from '../../../registry/components/glass-badge/glass-badge'
 import { Card, CardHeader, CardTitle, CardContent, StatCard } from '../../../registry/components/glass-card/glass-card'
+import { Input, Textarea } from '../../../registry/components/glass-input/glass-input'
+import { Field, Label } from '../../../registry/components/glass-field/glass-field'
+import { Checkbox } from '../../../registry/components/glass-checkbox/glass-checkbox'
+import { NativeSelect } from '../../../registry/components/glass-native-select/glass-native-select'
 import './style.css'
 
 const root = document.getElementById('root')!
@@ -136,6 +140,111 @@ createRoot(root).render(
             value="0.8%"
             delta={{ value: '0.3%', direction: 'up' }}
             style={{ minWidth: 200 }}
+          />
+        </div>
+      </section>
+
+      {/* ── F3: Input / Textarea ─────────────────────────────────────── */}
+      <section style={{ marginTop: 32 }}>
+        <h2>Input — sizes</h2>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+          <Input size="sm" placeholder="Small" style={{ maxWidth: 220 }} />
+          <Input size="md" placeholder="Medium" style={{ maxWidth: 220 }} />
+          <Input size="lg" placeholder="Large" style={{ maxWidth: 240 }} />
+        </div>
+        <h2>Input — types</h2>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+          <Input type="text" placeholder="Text" style={{ maxWidth: 220 }} />
+          <Input type="email" placeholder="you@example.com" style={{ maxWidth: 240 }} />
+          <Input type="password" placeholder="Password" style={{ maxWidth: 220 }} />
+        </div>
+        <h2>Input — invalid + disabled</h2>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Input placeholder="Invalid" invalid style={{ maxWidth: 220 }} />
+          <Input placeholder="Disabled" disabled style={{ maxWidth: 220 }} />
+        </div>
+      </section>
+
+      {/* ── F3: Field + Label + error ───────────────────────────────── */}
+      <section style={{ marginTop: 32 }}>
+        <h2>Field — with error</h2>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <Field label="Email" error="Please enter a valid email address.">
+            <Input type="email" placeholder="you@example.com" style={{ maxWidth: 320 }} />
+          </Field>
+          <Field label="Bio">
+            <Textarea placeholder="Tell us a little about yourself…" style={{ maxWidth: 320 }} />
+          </Field>
+        </div>
+      </section>
+
+      {/* ── F3: Checkbox ────────────────────────────────────────────── */}
+      <section style={{ marginTop: 32 }}>
+        <h2>Checkbox — states</h2>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Label>Unchecked</Label>
+          <Checkbox />
+          <Label>Checked</Label>
+          <Checkbox defaultChecked />
+          <Label>Mixed</Label>
+          <Checkbox defaultChecked="mixed" />
+          <Label>Disabled</Label>
+          <Checkbox disabled />
+          <Label>Disabled + checked</Label>
+          <Checkbox disabled defaultChecked />
+        </div>
+      </section>
+
+      {/* ── F3: NativeSelect ────────────────────────────────────────── */}
+      <section style={{ marginTop: 32 }}>
+        <h2>NativeSelect — sizes</h2>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+          <NativeSelect
+            size="sm"
+            options={[
+              { value: 'a', label: 'Small select' },
+              { value: 'b', label: 'Second option' },
+              { value: 'c', label: 'Third option' },
+            ]}
+            style={{ maxWidth: 220 }}
+          />
+          <NativeSelect
+            size="md"
+            options={[
+              { value: 'a', label: 'Medium select' },
+              { value: 'b', label: 'Second option' },
+              { value: 'c', label: 'Third option' },
+            ]}
+            style={{ maxWidth: 220 }}
+          />
+          <NativeSelect
+            size="lg"
+            options={[
+              { value: 'a', label: 'Large select' },
+              { value: 'b', label: 'Second option' },
+              { value: 'c', label: 'Third option' },
+            ]}
+            style={{ maxWidth: 240 }}
+          />
+        </div>
+        <h2>NativeSelect — invalid + disabled</h2>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <NativeSelect
+            invalid
+            options={[
+              { value: 'a', label: 'Choose a country' },
+              { value: 'b', label: 'United States' },
+              { value: 'c', label: 'United Kingdom' },
+            ]}
+            style={{ maxWidth: 240 }}
+          />
+          <NativeSelect
+            disabled
+            options={[
+              { value: 'a', label: 'Disabled select' },
+              { value: 'b', label: 'Cannot pick' },
+            ]}
+            style={{ maxWidth: 240 }}
           />
         </div>
       </section>
