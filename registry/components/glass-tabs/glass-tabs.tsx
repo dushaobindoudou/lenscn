@@ -26,8 +26,11 @@ export interface GlassTabsProps {
   style?: React.CSSProperties
 }
 
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3)
+/** ~3% single-overshoot spring — the JS twin of --ln-ease-spring. */
+function springOut(t: number): number {
+  const s = 0.9
+  const u = t - 1
+  return 1 + (s + 1) * u * u * u + s * u * u
 }
 
 /**
@@ -80,10 +83,10 @@ export function GlassTabs({
     cancelAnimationFrame(anim.current)
     const from = lens
     const start = performance.now()
-    const duration = 280
+    const duration = 350
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
-      const k = easeOutCubic(t)
+      const k = springOut(t)
       setLens({
         x: from.x + (next.x - from.x) * k,
         y: from.y + (next.y - from.y) * k,
@@ -140,12 +143,12 @@ export function GlassTabs({
         ref={tablistRef}
         role="tablist"
         onKeyDown={onKey}
-        style={{ position: 'relative', display: 'inline-flex', gap: 4, borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+        style={{ position: 'relative', display: 'inline-flex', gap: 4, borderBottom: '1px solid var(--ln-border)' }}
       >
         {lens && glass && (
           <Glass
-            lens={{ width: lens.w, height: lens.h, borderRadius: 12, depth: 12, domeDepth: 6, glowStrength: 0.4, edgeStrength: 0.3 }}
-            look={{ scale: 20, chroma: 0.2, specularStrength: 1.1 }}
+            lens={{ width: lens.w, height: lens.h, borderRadius: 12, depth: 12, domeDepth: 6, glowStrength: 0.4, edgeStrength: 0.35 }}
+            look={{ scale: 20, chroma: 0.2, specularStrength: 1.15 }}
             x={lens.x}
             y={lens.y}
             as="span"
@@ -162,7 +165,7 @@ export function GlassTabs({
               width: `${lens.w}px`,
               height: `${lens.h}px`,
               borderRadius: '12px',
-              background: 'rgba(255,255,255,0.14)',
+              background: 'var(--ln-fallback-pill)',
               pointerEvents: 'none',
             }}
           />
@@ -188,7 +191,7 @@ export function GlassTabs({
                 padding: '10px 18px',
                 background: 'transparent',
                 border: 'none',
-                color: selected ? '#fff' : 'rgba(255,255,255,0.6)',
+                color: selected ? 'var(--ln-text)' : 'var(--ln-text-muted)',
                 cursor: 'pointer',
                 font: 'inherit',
               }}
