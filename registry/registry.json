@@ -72,6 +72,48 @@
       ],
       "dependencies": ["@lenscn/react", "lenscn"],
       "registryDependencies": []
+    },
+    {
+      "name": "glass-button",
+      "type": "registry:component",
+      "title": "Button",
+      "description": "Matte button primitive. Variants: primary, secondary, ghost, danger. Sizes: sm/md/lg. Focus ring, disabled state.",
+      "files": [
+        {
+          "path": "registry/components/glass-button/glass-button.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
+    },
+    {
+      "name": "glass-badge",
+      "type": "registry:component",
+      "title": "Badge",
+      "description": "Matte pill badge. Tones: accent, success, warning, danger, info, neutral. 14% tint background, semantic text color.",
+      "files": [
+        {
+          "path": "registry/components/glass-badge/glass-badge.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
+    },
+    {
+      "name": "glass-card",
+      "type": "registry:component",
+      "title": "Card / StatCard",
+      "description": "Matte surface card (Card, CardHeader, CardTitle, CardContent) and KPI StatCard with optional delta indicator.",
+      "files": [
+        {
+          "path": "registry/components/glass-card/glass-card.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": ["tokens"]
     }
   ]
 }
