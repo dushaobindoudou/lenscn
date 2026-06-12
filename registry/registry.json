@@ -4,6 +4,20 @@
   "homepage": "https://dushaobindoudou.github.io/lenscn/",
   "items": [
     {
+      "name": "tokens",
+      "type": "registry:style",
+      "title": "Design Tokens",
+      "description": "All --ln-* design tokens, v2 Liquid Optics: light default + dark theme, type, spacing, radius, motion.",
+      "files": [
+        {
+          "path": "registry/styles/lenscn.css",
+          "type": "registry:style"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
       "name": "glass-switch",
       "type": "registry:component",
       "title": "Glass Switch",

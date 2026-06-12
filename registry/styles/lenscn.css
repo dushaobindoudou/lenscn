@@ -1,0 +1,115 @@
+/* lenscn design tokens — v2 "Liquid Optics" (Apple-native).
+   Source of truth: DESIGN.md. Light is the default theme. */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --ln-bg: #f5f5f7;
+  --ln-surface: #ffffff;
+  --ln-surface-2: #f2f2f7;
+  --ln-border: rgba(0, 0, 0, 0.08);
+  --ln-border-strong: rgba(0, 0, 0, 0.16);
+  --ln-text: #1d1d1f;
+  --ln-text-muted: rgba(29, 29, 31, 0.64);
+  --ln-text-faint: rgba(29, 29, 31, 0.4);
+
+  --ln-accent: #0071e3;
+  --ln-accent-hover: #0077ed;
+  --ln-accent-pressed: #0068d1;
+  --ln-accent-contrast: #ffffff;
+
+  --ln-success: #34c759;
+  --ln-warning: #ff9500;
+  --ln-danger: #ff3b30;
+  --ln-info: #32ade6;
+  --ln-success-text: #1b7f3e;
+  --ln-warning-text: #a05a00;
+  --ln-danger-text: #d70015;
+  --ln-info-text: #0b7fa6;
+
+  --ln-focus-ring: #0071e3;
+  --ln-handle: #ffffff;
+  --ln-fallback-pill: rgba(0, 0, 0, 0.06);
+  --ln-track-on: linear-gradient(180deg, #2fbe52, #3cd964);
+  --ln-track-off: linear-gradient(180deg, #e9e9ee, #dcdce1);
+  --ln-track-fill: #0071e3;
+  --ln-track-rest: #e5e5ea;
+
+  --ln-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04);
+  --ln-shadow-float: 0 24px 60px rgba(0, 0, 0, 0.12);
+  --ln-shadow-handle: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --ln-bg: #000000;
+  --ln-surface: #1c1c1e;
+  --ln-surface-2: #2c2c2e;
+  --ln-border: rgba(255, 255, 255, 0.1);
+  --ln-border-strong: rgba(255, 255, 255, 0.18);
+  --ln-text: #f5f5f7;
+  --ln-text-muted: rgba(245, 245, 247, 0.64);
+  --ln-text-faint: rgba(245, 245, 247, 0.4);
+
+  --ln-accent: #0a84ff;
+  --ln-accent-hover: #2691ff;
+  --ln-accent-pressed: #0974df;
+  --ln-accent-contrast: #ffffff;
+
+  --ln-success: #30d158;
+  --ln-warning: #ff9f0a;
+  --ln-danger: #ff453a;
+  --ln-info: #64d2ff;
+  --ln-success-text: #30d158;
+  --ln-warning-text: #ff9f0a;
+  --ln-danger-text: #ff453a;
+  --ln-info-text: #64d2ff;
+
+  --ln-focus-ring: #0a84ff;
+  --ln-handle: #ffffff;
+  --ln-fallback-pill: rgba(255, 255, 255, 0.14);
+  --ln-track-on: linear-gradient(180deg, #28b14a, #34d45c);
+  --ln-track-off: linear-gradient(180deg, #3a3a3f, #2c2c2e);
+  --ln-track-fill: #0a84ff;
+  --ln-track-rest: #39393d;
+
+  --ln-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --ln-shadow-float: 0 24px 70px rgba(0, 0, 0, 0.55);
+  --ln-shadow-handle: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+:root {
+  /* Theme-independent tokens. */
+  --ln-font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    system-ui, 'Segoe UI Variable', 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --ln-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo,
+    Consolas, monospace;
+
+  --ln-space-2: 2px;
+  --ln-space-4: 4px;
+  --ln-space-8: 8px;
+  --ln-space-12: 12px;
+  --ln-space-16: 16px;
+  --ln-space-24: 24px;
+  --ln-space-32: 32px;
+  --ln-space-48: 48px;
+  --ln-space-64: 64px;
+
+  --ln-radius-sm: 8px;
+  --ln-radius-md: 12px;
+  --ln-radius-lg: 20px;
+  --ln-radius-xl: 28px;
+  --ln-radius-full: 9999px;
+
+  --ln-ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --ln-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ln-ease-in: cubic-bezier(0.32, 0, 0.67, 0);
+  --ln-dur-micro: 150ms;
+  --ln-dur-lens: 350ms;
+  --ln-dur-enter: 300ms;
+  --ln-dur-exit: 200ms;
+  --ln-dur-toast: 250ms;
+}
