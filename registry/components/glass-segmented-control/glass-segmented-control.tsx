@@ -19,8 +19,11 @@ export interface GlassSegmentedControlProps<T extends string = string> {
   className?: string
 }
 
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3)
+/** ~3% single-overshoot spring — the JS twin of --ln-ease-spring. */
+function springOut(t: number): number {
+  const s = 0.9
+  const u = t - 1
+  return 1 + (s + 1) * u * u * u + s * u * u
 }
 
 /**
@@ -71,10 +74,10 @@ export function GlassSegmentedControl<T extends string = string>({
     cancelAnimationFrame(anim.current)
     const from = lens
     const start = performance.now()
-    const duration = 240
+    const duration = 350
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
-      const k = easeOutCubic(t)
+      const k = springOut(t)
       setLens({
         x: from.x + (next.x - from.x) * k,
         y: from.y + (next.y - from.y) * k,
@@ -134,8 +137,8 @@ export function GlassSegmentedControl<T extends string = string>({
     >
       {lens && glass && (
         <Glass
-          lens={{ width: lens.w, height: lens.h, borderRadius: lens.h / 2, depth: 14, domeDepth: 6, glowStrength: 0.4, edgeStrength: 0.25 }}
-          look={{ scale: 22, chroma: 0.2, specularStrength: 1.1 }}
+          lens={{ width: lens.w, height: lens.h, borderRadius: lens.h / 2, depth: 14, domeDepth: 6, glowStrength: 0.4, edgeStrength: 0.3 }}
+          look={{ scale: 22, chroma: 0.2, specularStrength: 1.15 }}
           x={lens.x}
           y={lens.y}
           as="span"
@@ -152,7 +155,7 @@ export function GlassSegmentedControl<T extends string = string>({
             width: `${lens.w}px`,
             height: `${lens.h}px`,
             borderRadius: `${lens.h / 2}px`,
-            background: 'rgba(255,255,255,0.14)',
+            background: 'var(--ln-fallback-pill)',
             pointerEvents: 'none',
           }}
         />
@@ -176,7 +179,7 @@ export function GlassSegmentedControl<T extends string = string>({
               padding: `${8 + lensPadding}px ${16 + lensPadding}px`,
               background: 'transparent',
               border: 'none',
-              color: selected ? '#fff' : 'rgba(255,255,255,0.7)',
+              color: selected ? 'var(--ln-text)' : 'var(--ln-text-muted)',
               cursor: 'pointer',
               font: 'inherit',
             }}
