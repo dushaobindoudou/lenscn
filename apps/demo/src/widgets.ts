@@ -1,7 +1,10 @@
 import { GlassFilter, generateLensMap } from 'lenscn'
 
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3)
+/** ~3% single-overshoot spring — the JS twin of --ln-ease-spring. */
+function springOut(t: number): number {
+  const s = 0.9
+  const u = t - 1
+  return 1 + (s + 1) * u * u * u + s * u * u
 }
 
 /**
@@ -39,10 +42,10 @@ export function initSwitch(root: HTMLElement): void {
     cancelAnimationFrame(raf)
     const from = progress
     const start = performance.now()
-    const duration = 260
+    const duration = 350
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
-      progress = from + (target - from) * easeOutCubic(t)
+      progress = from + (target - from) * springOut(t)
       apply()
       if (t < 1) raf = requestAnimationFrame(tick)
     }
