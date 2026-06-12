@@ -20,8 +20,11 @@ export interface GlassSwitchProps {
   className?: string
 }
 
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3)
+/** ~3% single-overshoot spring — the JS twin of --ln-ease-spring. */
+function springOut(t: number): number {
+  const s = 0.9
+  const u = t - 1
+  return 1 + (s + 1) * u * u * u + s * u * u
 }
 
 function trackStyle(checked: boolean, width: number, height: number): CSSProperties {
@@ -31,10 +34,8 @@ function trackStyle(checked: boolean, width: number, height: number): CSSPropert
     width: `${width}px`,
     height: `${height}px`,
     borderRadius: `${height / 2}px`,
-    background: checked
-      ? 'linear-gradient(180deg, #1f9d4d, #2fce6f)'
-      : 'linear-gradient(180deg, #2b303d, #3a4150)',
-    transition: 'background 0.25s ease',
+    background: checked ? 'var(--ln-track-on)' : 'var(--ln-track-off)',
+    transition: 'background 150ms ease-out',
   }
 }
 
@@ -72,8 +73,8 @@ export function GlassSwitch({
     const from = progress
     const start = performance.now()
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 260)
-      setProgress(from + (target - from) * easeOutCubic(t))
+      const t = Math.min(1, (now - start) / 350)
+      setProgress(from + (target - from) * springOut(t))
       if (t < 1) raf.current = requestAnimationFrame(tick)
     }
     raf.current = requestAnimationFrame(tick)
@@ -118,9 +119,9 @@ export function GlassSwitch({
             depth: 18,
             domeDepth: 8,
             glowStrength: 0.45,
-            edgeStrength: 0.3,
+            edgeStrength: 0.4,
           }}
-          look={{ scale: 26, chroma: 0.2, specularStrength: 1.2 }}
+          look={{ scale: 26, chroma: 0.2, specularStrength: 1.25 }}
           x={lensX}
           y={height / 2}
           as="span"
@@ -137,8 +138,8 @@ export function GlassSwitch({
               width: `${handleSize}px`,
               height: `${handleSize}px`,
               borderRadius: '50%',
-              background: '#fff',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
+              background: 'var(--ln-handle)',
+              boxShadow: 'var(--ln-shadow-handle)',
             }}
           />
         </span>
