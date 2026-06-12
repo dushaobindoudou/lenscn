@@ -28,7 +28,7 @@ function trackStyle(value: number, width: number, height: number): CSSProperties
     display: 'inline-block',
     width: `${width}px`,
     height: `${height}px`,
-    background: `linear-gradient(90deg, #6c5ce7 ${value * 100}%, #262c3a ${value * 100}%)`,
+    background: `linear-gradient(90deg, var(--ln-track-fill) ${value * 100}%, var(--ln-track-rest) ${value * 100}%)`,
     borderRadius: `${height / 2}px`,
   }
 }
@@ -126,9 +126,9 @@ export function GlassSlider({
             depth: 16,
             domeDepth: 6,
             glowStrength: 0.4,
-            edgeStrength: 0.3,
+            edgeStrength: 0.35,
           }}
-          look={{ scale: 30, chroma: 0.2, specularStrength: 1.1 }}
+          look={{ scale: 30, chroma: 0.2, specularStrength: 1.2 }}
           x={lensX}
           y={height / 2}
           as="span"
@@ -145,8 +145,8 @@ export function GlassSlider({
               width: `${lensH - 8}px`,
               height: `${lensH - 8}px`,
               borderRadius: '50%',
-              background: '#fff',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
+              background: 'var(--ln-handle)',
+              boxShadow: 'var(--ln-shadow-handle)',
             }}
           />
         </span>
