@@ -62,24 +62,29 @@ parallelizable after F1.
 
 ### F1. Design tokens + retrofit existing components
 
+> **Status: superseded.** F1 is implemented by the v2 reskin plan
+> (`docs/superpowers/plans/2026-06-12-apple-native-v2-reskin.md`), which
+> also reskins both demos and migrates motion to spring. F2+ assume it is
+> done. The summary below stays for context only.
+
 **Goal:** the token layer exists and the four shipped components consume it.
 
 - Create `registry/styles/lenscn.css` with every token from DESIGN.md
-  (both themes), `@import`-able and also listed in `registry/registry.json`
-  as `registry:style` item `tokens`.
+  (light default + dark), `@import`-able and also listed in
+  `registry/registry.json` as `registry:style` item `tokens`.
 - Retrofit `glass-switch`, `glass-slider`, `glass-tabs`,
   `glass-segmented-control`: replace raw colors (track gradients, text
-  rgba, fallback pill rgba) with `var(--ln-…)` equivalents. Track
-  gradients become tokens too: `--ln-track-on` (accent-tinted),
-  `--ln-track-off`, `--ln-track-fill`. **Switch ON state changes from
-  green to prism teal** (`--ln-accent` family) per DESIGN.md.
-- Update both demo apps to import the tokens file and set
-  `data-theme="dark"`; demo accent moves from purple `#6c5ce7` to
-  `var(--ln-accent)` (G8: purple is retired).
+  rgba, fallback pill rgba) with `var(--ln-…)` equivalents
+  (`--ln-track-on/off/fill/rest`, `--ln-fallback-pill`, `--ln-handle`),
+  and replace `easeOutCubic`/240–280ms with `springOut`/350ms per
+  DESIGN.md Motion.
+- Update both demo apps to import the tokens file; light is the default
+  theme; demo accent moves from purple `#6c5ce7` to `var(--ln-accent)`
+  (Apple blue — purple is retired).
 
 **Acceptance:**
 - [ ] Zero raw hex/rgba colors left in the four component files (grep).
-- [ ] Both demos render correctly in dark and light (`data-theme` flip).
+- [ ] Both demos render correctly in light and dark (`data-theme` flip).
 - [ ] All existing tests still pass; visual smoke in Chrome + Safari.
 
 ### F2. Button, Badge, Card, StatCard (matte primitives)
@@ -95,9 +100,9 @@ task (G1)** — buttons are matte by doctrine.
 | `disabled` | `boolean` | `false` |
 | + all native `button` props (`type`, `onClick`, …) | | |
 
-Styles per DESIGN.md: radius `--ln-radius-md`, font 500 13.5px body stack,
-primary = accent bg + accent-contrast text, hover/pressed use
-accent-hover/pressed, 120ms tint transition, focus ring
+Styles per DESIGN.md: radius `--ln-radius-md`, font 500 14px
+`--ln-font-sans`, primary = accent bg + accent-contrast text,
+hover/pressed use accent-hover/pressed, 150ms tint transition, focus ring
 `2px solid var(--ln-focus-ring)` offset 2px. Disabled: 50% opacity,
 `cursor: not-allowed`.
 
@@ -106,19 +111,20 @@ pill radius, 22px height, tinted bg at 14% opacity + tone color text
 (pattern: `rgba` of the tone token — use `color-mix(in srgb, var(--ln-success) 14%, transparent)`).
 
 `glass-card` — `Card`, `CardHeader`, `CardTitle`, `CardContent`: surface
-bg, `--ln-border` 1px, radius `--ln-radius-lg`, padding 20px,
-`--shadow-card`. Plus `StatCard`:
+bg, `--ln-border` 1px, radius `--ln-radius-lg`, padding 24px,
+`--ln-shadow-card`. Plus `StatCard`:
 | Prop | Type |
 |---|---|
-| `label` | `string` (caption style, uppercase) |
-| `value` | `string` (KPI style: JetBrains Mono 600 28px tabular-nums) |
+| `label` | `string` (caption style, sentence case) |
+| `value` | `string` (KPI style: `--ln-font-sans` 600 28px tabular-nums) |
 | `delta` | `{ value: string; direction: 'up' \| 'down' }?` (success/danger color) |
 
 **Acceptance:**
 - [ ] All variants/sizes/tones rendered in demo-react, both themes.
 - [ ] Buttons keyboard-operable with visible focus ring; `aria-disabled`
       not used (real `disabled` attribute).
-- [ ] KPI numerals are mono + tabular (assert computed style in test).
+- [ ] KPI numerals use tabular-nums (assert computed
+      `font-variant-numeric` in test).
 
 ### F3. Form set: Input, Textarea, Label, Field, Checkbox, NativeSelect
 
@@ -158,9 +164,10 @@ rotated vertically + nav semantics; copy its measurement/animation code.
 
 - Semantics: `<nav>` > list of `<a>` (when `href`) or `<button>`;
   `aria-current="page"` on the active item. NOT a tablist.
-- Lens: preset **lens-m**, `borderRadius: 10`, slides vertically 240ms
-  easeOutCubic; ResizeObserver re-measures; reduced-motion jumps;
-  degraded fallback = solid `--ln-surface-2` pill behind active item.
+- Lens: preset **lens-m**, `borderRadius: 12`, slides vertically 350ms
+  `springOut` (copy from glass-tabs); ResizeObserver re-measures;
+  reduced-motion jumps; degraded fallback = solid `--ln-fallback-pill`
+  behind the active item.
 - Keyboard: normal tab order (links), Enter/Space activates buttons.
   No roving tabindex (it's navigation, not a composite widget).
 - Item: 36px height, padding 9px 12px, muted text → text when active.
@@ -185,8 +192,8 @@ markup out — no virtualisation, no deps.
 | `loading` | `boolean` → renders Skeleton rows |
 | `empty` | `ReactNode` |
 
-- Styling per DESIGN.md table spec: 44px rows, caption-style headers,
-  hairline row borders, `numeric` columns mono+tabular right-aligned,
+- Styling per DESIGN.md table spec: 48px rows, caption-style headers,
+  hairline row borders, `numeric` columns tabular-nums right-aligned,
   hover row `--ln-surface-2`.
 - Sorting: client-side compare when uncontrolled; sortable headers are
   `<button>` inside `<th aria-sort=…>`, cycle asc→desc.
@@ -195,7 +202,7 @@ markup out — no virtualisation, no deps.
 
 **Acceptance:**
 - [ ] Sort cycles and `aria-sort` updates (test); controlled sort works.
-- [ ] Numeric cells are mono/tabular/right-aligned; loading and empty
+- [ ] Numeric cells are tabular-nums/right-aligned; loading and empty
       states render.
 
 ### F6. Overlay set: DropdownMenu, Tooltip, Toast
@@ -215,7 +222,8 @@ markup out — no virtualisation, no deps.
 - `Toast`: `ToastProvider` + `useToast()`; viewport bottom-right, stack
   max 3, auto-dismiss 5s (pause on hover), `role="status"`
   (`aria-live="polite"`), tones success/danger/info with 3px left accent
-  bar. Enter: slide-up 200ms; reduced-motion: appear in place.
+  bar. Enter: slide-up 250ms `--ln-ease-spring`; reduced-motion: appear
+  in place.
 
 **Acceptance:**
 - [ ] Full keyboard paths tested (menu cycle, Esc focus restore).
@@ -227,7 +235,7 @@ markup out — no virtualisation, no deps.
 **Goal:** modal surface. **Matte panel** (legibility), with one optional
 glass moment: the dialog sits over a dimmed backdrop, and the demo places
 it over the aurora so the page itself stays alive behind
-`rgba(11,13,18,0.6)` dimming. No glass on the panel (G1 — a dialog is
+`rgba(0,0,0,0.4)` dimming. No glass on the panel (G1 — a dialog is
 content, not a control).
 
 `glass-dialog` — `Dialog`, `DialogTrigger`, `DialogContent`,
@@ -235,9 +243,9 @@ content, not a control).
 - Native `<dialog>` element (`showModal()`) for free focus-trap + Esc;
   fallback: portal + manual trap if `HTMLDialogElement` unsupported is
   NOT required (all target browsers ship it).
-- Panel: surface bg, radius-lg, `--shadow-float`, max-width 480px,
-  padding 24px; enter scale 0.98→1 + fade 200ms, exit 150ms;
-  reduced-motion: no transform.
+- Panel: surface bg, `--ln-radius-xl` (28px), `--ln-shadow-float`,
+  max-width 480px, padding 24px; enter scale 0.98→1 + fade 300ms
+  `--ln-ease-spring`, exit 200ms ease-in; reduced-motion: no transform.
 - `aria-labelledby`/`aria-describedby` wired via `useId`.
 
 **Acceptance:**
@@ -254,7 +262,8 @@ the line chart on hover, genuinely refracting the curve beneath it
 `glass-charts/glass-charts.tsx`:
 - `LineChart`: `{ data: { x: string | number; y: number }[]; height?; formatY?; formatX? }`.
   Renders inline SVG: area gradient fill (accent at 35%→0), 2.5px accent
-  line, 4 horizontal gridlines (`--ln-border`), mono axis labels (12px).
+  line, 4 horizontal gridlines (`--ln-border`), tabular-nums axis labels
+  (12px).
   `role="img"` + `aria-label` summary; data table fallback in
   `<desc>` not required.
 - `BarChart`: same data shape, rounded-top 4px bars, accent fill, hover
@@ -262,7 +271,7 @@ the line chart on hover, genuinely refracting the curve beneath it
 - `GlassScrubber` (inside LineChart, `scrubber` prop, default on):
   a `<Glass>` window (~84×height, preset lens-l, borderRadius 16) that
   follows pointer x along the chart, snapping to the nearest data point;
-  above it a mono read-out `x · y`. **The chart SVG is painted content
+  above it a tabular-nums read-out `x · y`. **The chart SVG is painted content
   inside the Glass host** so the curve actually bends (G4). Hidden when
   degraded (`isSupported()` false) — scrubbing falls back to a 1px
   accent rule + read-out. Touch: drag works (`pointermove`).
@@ -305,8 +314,8 @@ flips `data-theme` and persists to `localStorage`.
 
 ### G2. Overview page (the screenshot)
 
-Layout exactly as the preview mockup: 4 `StatCard`s (Revenue ¥-mono KPI,
-Orders, Refund rate, Active users with deltas) → `LineChart` with
+Layout exactly as the preview mockup: 4 `StatCard`s (Revenue ¥ KPI in
+tabular-nums, Orders, Refund rate, Active users with deltas) → `LineChart` with
 `GlassScrubber` (Revenue trend, 30 points of plausible data) → `DataTable`
 (Customer / Status `Badge` / Orders / Total, sortable, 8 rows) →
 `Toast` on "New report" `Button`. Range filter actually filters the
@@ -332,8 +341,8 @@ zero console errors), deploy to GitHub Pages alongside the existing demo
 - [ ] All five nav sections have real content; every registry component
       appears in the dashboard at least once.
 - [ ] CI green; public URL serves the dashboard; README links it.
-- [ ] Lighthouse perf ≥ 90 on the deployed Overview page (no fonts
-      blocking render: `display=swap`; aurora is GPU-only).
+- [ ] Lighthouse perf ≥ 90 on the deployed Overview page (system fonts —
+      zero font requests; aurora is GPU-only).
 
 ---
 
